@@ -1,4 +1,4 @@
-require("dotenv").config()
+
 //store dependencies as variables.
 var keys = require('./keys.js');
 var twitter = require("twitter");
@@ -11,6 +11,7 @@ var inquirer = require("inquirer");
 require("dotenv").config();
 
 function liriBot(){
+
 inquirer.prompt([
     {
       type: "list",
@@ -136,7 +137,7 @@ function followTheTextbook(){
             secondCommand = secondCommand + "+" + dataArr[i];
         };
         //run action
-		theGreatSwitch();
+		liriBot();
 		
     	};//end else
 
@@ -144,4 +145,4 @@ function followTheTextbook(){
 
 };//end followTheTextbook
 
-theGreatSwitch();
+liriBot();
