@@ -2,7 +2,7 @@
 //store dependencies as variables.
 var keys = require('./keys.js');
 var twitter = require("twitter");
-var spotify = require("spotify");
+var spotify = require('spotify');
 var request = require("request");
 var fs = require('fs');
 // var inquirer = require("inquirer");
@@ -10,15 +10,20 @@ var fs = require('fs');
 // require to call file where keys are stored
 require("dotenv").config();
 
-console.log(process.env.TWITTER_CONSUMER_KEY)
 //process[2] choses action, process[3] as search parameter for spotify or movie.
 
 var userInput = process.argv[2];
 var userInput2 = process.argv[3];
 
+console.log("\nspotify ID " +  process.env.SPOTIFY_ID)
+console.log("\nspotify secret " + process.env.SPOTIFY_SECRET)
+
 function liriBot() {
     //capture user input, and inform user of what to type in.
-    console.log("Type tweets , spotify (song name), movie (movie name) , or random");
+    console.log("\nType tweets , spotify (song name), movie (movie name) , or random\n");
+
+    // console.log('Spotify Info: ' + spotify);
+    // console.log('twitter info: ' + twitter);
 
     //action statement, switch statement to declare what action to execute.
     switch (userInput) {
@@ -45,13 +50,13 @@ function liriBot() {
 
 
 function fetchTweets() {
-    console.log("Tweets headed your way!");
+    console.log("\nTweets headed your way!\n");
     //new variable for instance of twitter, load keys from imported keys.js
     var client = new twitter({
-        consumer_key: process.keys.consumer_key,
-        consumer_secret: process.keys.consumer_secret,
-        access_token_key: process.keys.access_token_key,
-        access_token_secret: process.keys.access_token_secret
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+        access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
     });
 
     //parameters for twitter function.
@@ -73,10 +78,16 @@ function fetchTweets() {
 };//end fetchTweets;
 
 function spotifyMe() {
-    console.log("Music for DAYS!");
+    // Displays the statement in quotes
+    console.log("Music for you!");
+
+    var spotify = ({
+        id: process.env.SPOTIFY_CLIENT_ID,
+        secret: process.env.SPOTIFY_CLIENT_SECRET
+    });
 
     //variable for search term, test if defined.
-
+    
     var searchTrack;
     if (userInput2 === undefined) {
         searchTrack = "many men";
@@ -85,12 +96,12 @@ function spotifyMe() {
     }
     //launch spotify search
     spotify.search({ type: 'track', query: searchTrack }, function (err, data) {
-        console.log(data);
+
         if (err) {
             console.log('Error: ' + err);
             return;
         } else {
-            //tried searching for release year! Spotify doesn't return this!
+            //returns the information Artist, Song, Album, and Link for preview
             console.log("Artist: " + data.tracks.artists.name);
             console.log("Song: " + data.tracks.name);
             console.log("Album: " + data.tracks.album.name);
@@ -109,6 +120,7 @@ function movieSearch() {
     } else {
         searchMovie = userInput2;
     };
+// call to the API for the movie info
 
     var url = 'http://www.omdbapi.com/?t=' + searchMovie + '&y=&plot=long&tomatoes=true&r=json&apikey=trilogy';
     request(url, function (error, response, body) {
