@@ -2,7 +2,7 @@
 //store dependencies as variables.
 var keys = require('./keys.js');
 var twitter = require("twitter");
-var spotify = require('spotify');
+var Spotify = require('node-spotify-api');
 var request = require("request");
 var fs = require('fs');
 // var inquirer = require("inquirer");
@@ -14,9 +14,6 @@ require("dotenv").config();
 
 var userInput = process.argv[2];
 var userInput2 = process.argv[3];
-
-console.log("\nspotify ID " +  process.env.SPOTIFY_ID)
-console.log("\nspotify secret " + process.env.SPOTIFY_SECRET)
 
 function liriBot() {
     //capture user input, and inform user of what to type in.
@@ -81,19 +78,21 @@ function spotifyMe() {
     // Displays the statement in quotes
     console.log("Music for you!");
 
-    var spotify = ({
-        id: process.env.SPOTIFY_CLIENT_ID,
-        secret: process.env.SPOTIFY_CLIENT_SECRET
+    var spotify = new Spotify({
+        id: "98b2e2d1234d4e8da782f21b8e313e73",
+        secret: "1e580908d01d42188e5aadc95b6aa9e5"
     });
 
     //variable for search term, test if defined.
     
-    var searchTrack;
     if (userInput2 === undefined) {
         searchTrack = "many men";
     } else {
         searchTrack = userInput2;
     }
+
+    // userInput2 === undefined ? searchTrack = "many men" : searchTrack = userInput2;
+
     //launch spotify search
     spotify.search({ type: 'track', query: searchTrack }, function (err, data) {
 
@@ -102,10 +101,10 @@ function spotifyMe() {
             return;
         } else {
             //returns the information Artist, Song, Album, and Link for preview
-            console.log("Artist: " + data.tracks.artists.name);
-            console.log("Song: " + data.tracks.name);
-            console.log("Album: " + data.tracks.album.name);
-            console.log("Preview Here: " + data.tracks.preview_url);
+            console.log("Artist: " + data.tracks.items[0].artists.name);
+            console.log("Song: " + data.tracks.items[0].name);
+            console.log("Album: " + data.tracks.items[0].album.name);
+            console.log("Preview Here: " + data.tracks.items[0].preview_url);
         }
     });
 };//end spotifyMe
@@ -120,7 +119,7 @@ function movieSearch() {
     } else {
         searchMovie = userInput2;
     };
-// call to the API for the movie info
+    // call to the API for the movie info
 
     var url = 'http://www.omdbapi.com/?t=' + searchMovie + '&y=&plot=long&tomatoes=true&r=json&apikey=trilogy';
     request(url, function (error, response, body) {
